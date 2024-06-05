@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaino/network/api.dart';
+import 'package:kaino/pages/profile/preference/index.dart';
 
 import 'common/locale/index.dart';
 import 'pages/home/index.dart';
+import 'pages/login/index.dart';
 import 'pages/profile/index.dart';
+import 'store/store.dart';
 
 void main() {
+  Get.lazyPut<ApiConnect>(() => ApiConnect());
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final Controller c = Get.put(Controller());
   Map routes = {
-    '/': (context) => const Home(),
-    '/home': (context) => const Home(),
+    '/': (context) => Home(),
+    '/home': (context) => Home(),
     '/profile': (context) => const Profile(),
+    '/preference': (context) => const Preference(),
+    '/login': (context) => const Login(),
   };
   MyApp({super.key});
 

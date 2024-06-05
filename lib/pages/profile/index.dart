@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kaino/components/squareTile/index.dart';
+import 'package:kaino/common/icons.dart';
+import 'package:kaino/store/store.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -10,124 +11,158 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  bool _obscureText = true;
   bool remember = true;
+  Map<String, dynamic> currUser = {};
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      currUser = Controller.c.user;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    onSubmit() {}
     return Container(
-        decoration: BoxDecoration(color: Colors.white),
-        padding: EdgeInsets.fromLTRB(10, 80, 10, 10),
-        child: Scaffold(
-          body: Column(
-            children: [
-              const Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.arrow_back,
-                    color: Colors.blue,
-                    size: 30,
-                  )
-                ],
-              ),
-              Container(
-                width: 240,
-                margin: const EdgeInsets.only(top: 20),
-                child: Image.asset(
-                  'assets/logo.png',
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'PROFILE'.tr,
+            style: const TextStyle(color: Color(0xFF4D97D3), fontSize: 18),
+          ),
+          backgroundColor: Colors.white,
+        ),
+        body: Container(
+            padding: EdgeInsets.fromLTRB(15, 30, 15, 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Account',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    Text(currUser['userName']),
+                  ],
                 ),
-              ),
-              Container(
-                  margin: const EdgeInsets.only(top: 50),
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  height: 120,
-                  alignment: Alignment.bottomRight,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Email',
+                Container(
+                    margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 10,
+                              spreadRadius: -2,
+                              color: Color(0xFF4D97D3)),
+                        ]),
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Icon(
+                            KainoIcon.token,
+                            color: Color(0xFF4D97D3),
+                            size: 20,
+                          ),
+                          Container(width: 20),
+                          Expanded(child: Text('AVAILABLE_CREDIT'.tr)),
+                          Text(currUser['freeToken'].toString())
+                        ])),
+                Container(
+                    margin: const EdgeInsets.symmetric(vertical: 15),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 10,
+                              spreadRadius: -2,
+                              color: Color(0xFF4D97D3)),
+                        ]),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/preference');
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color:
+                                          Color.fromARGB(255, 198, 222, 243))),
+                            ),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Icon(
+                                    KainoIcon.user,
+                                    color: Color(0xFF4D97D3),
+                                    size: 23,
+                                  ),
+                                  Container(width: 20),
+                                  Expanded(child: Text('PREFERENCE'.tr)),
+                                  const Icon(Icons.chevron_right)
+                                ]),
+                          ),
                         ),
-                      ),
-                      TextField(
-                        obscureText: _obscureText,
-                        decoration: InputDecoration(
-                            hintText: 'Password',
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText = !_obscureText;
-                                  });
-                                },
-                                icon: Icon(_obscureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility))),
-                      ),
-                    ],
-                  )),
-              Container(
-                margin: EdgeInsets.fromLTRB(10, 20, 20, 0),
-                child: Row(
+                        Container(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Icon(
+                                    KainoIcon.twoFA,
+                                    color: Color(0xFF4D97D3),
+                                    size: 23,
+                                  ),
+                                  Container(width: 20),
+                                  Expanded(child: Text('TWOFA'.tr)),
+                                  const Icon(Icons.chevron_right)
+                                ])),
+                      ],
+                    )),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text('HISTORY'.tr),
                     Row(
                       children: [
-                        Checkbox(
-                            value: remember,
-                            onChanged: (e) {
-                              setState(() {
-                                remember = e as bool;
-                              });
-                            }),
-                        Text('REMEMBER_ME'.tr)
+                        Text('MORE'.tr),
+                        const Icon(Icons.chevron_right)
                       ],
-                    ),
-                    GestureDetector(
-                      child: Text(
-                        'FORGOT_PASSWORD'.tr,
-                        style: const TextStyle(
-                            color: Colors.blue,
-                            fontSize: 15,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.blue),
-                      ),
                     )
                   ],
                 ),
-              ),
-              Container(
-                width: 350,
-                margin: EdgeInsets.only(top: 20),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      backgroundColor: MaterialStateProperty.all(
-                          const Color.fromARGB(255, 113, 170, 216))),
-                  child: Text('LOGIN'.tr),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(10, 20, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('NO_ACCOUNT_YET'.tr),
-                    Text('   '),
-                    Text(
-                      'SIGN_UP_HERE'.tr,
-                      style: TextStyle(color: Colors.blue),
+                    Image.asset(
+                      'assets/bin.png',
+                      height: 130,
                     ),
+                    Container(
+                      height: 10,
+                    ),
+                    const Text(
+                      'No data',
+                      style: TextStyle(fontSize: 20),
+                    )
                   ],
-                ),
-              ),
-              Row(children: [
-                SquareTile(imagePath: 'assets/google.png', onTap: () {})
-              ])
-            ],
-          ),
-        ));
+                ))
+              ],
+            )),
+      ),
+    );
   }
 }

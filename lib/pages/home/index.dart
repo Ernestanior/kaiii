@@ -1,10 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:kaino/components/actionSheets/switchLan.dart';
+import 'package:kaino/store/store.dart';
+import 'package:kaino/store/token.dart';
+import 'package:kaino/store/user.dart';
 import '../../common/data.dart';
 import '../../common/icons.dart';
 
@@ -17,6 +16,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String language = 'English';
+  @override
+  void initState() {
+    UserInfo().getUserInfo();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,57 +60,41 @@ class _HomeState extends State<Home> {
         title:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           SizedBox(
-            width: 80,
+            width: 60,
             child: Image.asset(
               'assets/logo.png',
             ),
           ),
           Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  Get.bottomSheet(Container(
-                    color: Colors.white,
-                    height: 150,
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: const Text('English'),
-                          onTap: () {
-                            var locale = const Locale('en', 'US');
-                            Get.updateLocale(locale);
-                            setState(() {
-                              language = 'English';
-                            });
-                            Get.back();
-                          },
-                        ),
-                        ListTile(
-                          title: const Text('中文'),
-                          onTap: () {
-                            var locale = const Locale('zh', 'CN');
-                            Get.updateLocale(locale);
-                            setState(() {
-                              language = '中文';
-                            });
-                            Get.back();
-                          },
-                        ),
-                      ],
+              Visibility(
+                visible: Controller.c.user.isEmpty,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.bottomSheet(Switchlan(
+                      onChange: (e) {
+                        setState(() {
+                          language = e;
+                        });
+                      },
+                    ));
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: Text(
+                      language,
+                      style: const TextStyle(fontSize: 14),
                     ),
-                  ));
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  child: Text(
-                    language,
-                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/profile');
+                  if (Controller.c.user.isEmpty) {
+                    Navigator.pushNamed(context, '/login');
+                  } else {
+                    Navigator.pushNamed(context, '/profile');
+                  }
                 },
                 child: const Icon(
                   KainoIcon.user,
@@ -161,14 +149,17 @@ class _HomeState extends State<Home> {
               height: 50,
               margin: const EdgeInsets.only(top: 20),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  print(await LocalStorage().localStorage('get', 'ai-token'));
+                },
                 style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                    backgroundColor: MaterialStateProperty.all(
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    backgroundColor: WidgetStateProperty.all(
                         const Color.fromARGB(255, 113, 170, 216))),
                 child: Text(
                   'GET_YOUR_DESIGN'.tr,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
