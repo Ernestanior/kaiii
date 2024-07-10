@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:kaino/common/icons.dart';
+import 'package:kaino/network/api.dart';
 import 'package:kaino/store/store.dart';
 
 class Profile extends StatefulWidget {
@@ -12,6 +14,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool remember = true;
+  List data = [];
   Map<String, dynamic> currUser = {};
   @override
   void initState() {
@@ -19,14 +22,33 @@ class _ProfileState extends State<Profile> {
     setState(() {
       currUser = Controller.c.user;
     });
+    imgHistory({'page': 1, 'pageSize': 4}).then((res) {
+      setState(() {
+        data = res['data'];
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    onSubmit() {}
+    List<Widget> dataList = data
+        .map((e) => GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, '/renderDetail', arguments: e);
+              },
+              child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Image.network(e['cover'], fit: BoxFit.cover)),
+            ))
+        .toList();
+
     return Container(
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 40,
           title: Text(
             'PROFILE'.tr,
             style: const TextStyle(color: Color(0xFF4D97D3), fontSize: 18),
@@ -34,7 +56,7 @@ class _ProfileState extends State<Profile> {
           backgroundColor: Colors.white,
         ),
         body: Container(
-            padding: EdgeInsets.fromLTRB(15, 30, 15, 30),
+            padding: const EdgeInsets.fromLTRB(15, 30, 15, 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,7 +72,7 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
                 Container(
-                    margin: EdgeInsets.fromLTRB(0, 30, 0, 10),
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 10),
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -135,31 +157,46 @@ class _ProfileState extends State<Profile> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('HISTORY'.tr),
-                    Row(
-                      children: [
-                        Text('MORE'.tr),
-                        const Icon(Icons.chevron_right)
-                      ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/history');
+                      },
+                      child: Row(
+                        children: [
+                          Text('MORE'.tr),
+                          const Icon(Icons.chevron_right)
+                        ],
+                      ),
                     )
                   ],
                 ),
+                Container(
+                  height: 10,
+                ),
                 Expanded(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/bin.png',
-                      height: 130,
-                    ),
-                    Container(
-                      height: 10,
-                    ),
-                    const Text(
-                      'No data',
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ],
-                ))
+                    child: dataList.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/bin.png',
+                                height: 130,
+                              ),
+                              Container(
+                                height: 10,
+                              ),
+                              const Text(
+                                'No data',
+                                style: TextStyle(fontSize: 20),
+                              )
+                            ],
+                          )
+                        : GridView.count(
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                            crossAxisCount: 2,
+                            children: dataList,
+                          ))
               ],
             )),
       ),

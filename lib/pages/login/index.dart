@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/common/encrypt.dart';
@@ -11,6 +9,7 @@ import 'package:kaino/pages/home/index.dart';
 import 'package:kaino/store/store.dart';
 import 'package:kaino/store/token.dart';
 import 'package:kaino/store/user.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -35,10 +34,36 @@ class _LoginState extends State<Login> {
 
     onGoogleLogin() async {
       final googleToken = await GoogleAuthService().signInWithGoogle();
-      final res = await ApiConnect().googleLogin(googleToken);
-      await LocalStorage().localStorage('set', 'ai-token', value: res['token']);
-      UserInfo().getUserInfo();
-      Get.offAll(() => const Home());
+      if (googleToken != null) {
+        final res = await googleLogin(googleToken);
+        await LocalStorage()
+            .localStorage('set', 'ai-token', value: res['token']);
+        UserInfo().getUserInfo();
+        Get.offAll(() => const Home());
+      }
+    }
+
+    Future<void> onAppleLogin() async {
+      try {
+        final credential = await SignInWithApple.getAppleIDCredential(
+          nonce: '123',
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+          ],
+        );
+        final res = await appleLogin({
+          'identityToken': credential.identityToken,
+          'nonce': '123',
+          'platform': 'com.gp.kaino',
+          'authorizationCode': credential.authorizationCode
+        });
+        await LocalStorage()
+            .localStorage('set', 'ai-token', value: res['token']);
+        UserInfo().getUserInfo();
+        Get.offAll(() => const Home());
+      } catch (e) {
+        print(e);
+      }
     }
 
     onSubmit() async {
@@ -60,14 +85,13 @@ class _LoginState extends State<Login> {
         'remember': remember ? 1 : 0,
         'response': 'app'
       };
-      dynamic res = await ApiConnect().login(data);
+      dynamic res = await login(data);
       Controller.c.token(res['token']);
-      LocalStorage().localStorage('set', 'token', value: res['token']);
+      await LocalStorage().localStorage('set', 'ai-token', value: res['token']);
       Get.offAll(() => const Home());
     }
 
-    return Container(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
@@ -182,10 +206,10 @@ class _LoginState extends State<Login> {
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             SquareTile(imagePath: 'assets/google.png', onTap: onGoogleLogin),
-            SquareTile(imagePath: 'assets/apple.png', onTap: () {}),
+            SquareTile(imagePath: 'assets/apple.png', onTap: onAppleLogin),
           ])
         ],
       ),
-    ));
+    );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kaino/components/actionSheets/cameraSheet.dart';
 import 'package:kaino/components/actionSheets/switchLan.dart';
+import 'package:kaino/components/actionSheets/upgrade.dart';
+import 'package:kaino/components/draggableDivider/localeImg.dart';
 import 'package:kaino/store/store.dart';
-import 'package:kaino/store/token.dart';
 import 'package:kaino/store/user.dart';
 import '../../common/data.dart';
 import '../../common/icons.dart';
@@ -16,51 +18,49 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String language = 'English';
+  String style = staticStyleList[0]['value'];
+  String homeImg = staticStyleList[0]['uri'];
+
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     UserInfo().getUserInfo();
     super.initState();
+    _scrollController = ScrollController();
+    // Restore scroll position if needed
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   onScroll();
+    // });
+  }
+
+  onScroll() {
+    if (_scrollController.hasClients) {
+      final selectedIndex =
+          staticStyleList.indexWhere((map) => map['value'] == style);
+
+      final screenWidth = MediaQuery.of(context).size.width;
+      const itemWidth = 200 + 10;
+      final targetScrollOffset =
+          (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+      _scrollController.animateTo(
+        targetScrollOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> styleList = staticStyleList
-        .map(
-          (e) => Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color.fromARGB(255, 176, 176, 176)),
-            margin: const EdgeInsets.only(left: 10),
-            child: Column(
-              children: [
-                Image.asset(
-                  e['uri'],
-                  height: 130,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 3),
-                  child: Text(
-                    e['label'].toString().tr,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Color.fromARGB(255, 255, 255, 255)),
-                  ),
-                )
-              ],
-            ),
-          ),
-        )
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 40,
         backgroundColor: Colors.white,
         title:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           SizedBox(
-            width: 60,
+            width: 65,
             child: Image.asset(
               'assets/logo.png',
             ),
@@ -110,20 +110,20 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(bottom: 20),
+              margin: const EdgeInsets.only(bottom: 10),
               child: Column(
                 children: <Widget>[
                   Text(
-                    'TAGLINE1'.tr,
+                    'MAKE_THE'.tr,
                     style: const TextStyle(
-                        fontSize: 50,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(198, 84, 124, 187)),
                   ),
                   Text(
-                    'TAGLINE2'.tr,
+                    'DESIGN_EASIER'.tr,
                     style: const TextStyle(
-                        fontSize: 50,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(198, 84, 124, 187)),
                   ),
@@ -133,12 +133,12 @@ class _HomeState extends State<Home> {
             Column(
               children: <Widget>[
                 Text(
-                  'TAGLINE_DESC1'.tr,
+                  'UPLOAD_SPACE_PHOTO__CONFIGURE_RENDERING_PARAMETERS_1'.tr,
                   style: const TextStyle(
                       fontSize: 15, color: Color.fromARGB(197, 110, 110, 110)),
                 ),
                 Text(
-                  'TAGLINE_DESC2'.tr,
+                  'UPLOAD_SPACE_PHOTO__CONFIGURE_RENDERING_PARAMETERS_2'.tr,
                   style: const TextStyle(
                       fontSize: 15, color: Color.fromARGB(197, 110, 110, 110)),
                 ),
@@ -150,7 +150,11 @@ class _HomeState extends State<Home> {
               margin: const EdgeInsets.only(top: 20),
               child: ElevatedButton(
                 onPressed: () async {
-                  print(await LocalStorage().localStorage('get', 'ai-token'));
+                  if (Controller.c.user.isEmpty) {
+                    Get.bottomSheet(const Upgrade());
+                  } else {
+                    Get.bottomSheet(const CameraSheet());
+                  }
                 },
                 style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all(Colors.white),
@@ -165,18 +169,64 @@ class _HomeState extends State<Home> {
             ),
             Container(
               clipBehavior: Clip.hardEdge,
-              margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
               decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(20)),
-              child: Image.asset(
-                'assets/home/1.jpg',
-              ),
+                  BoxDecoration(borderRadius: BorderRadius.circular(10)),
+              margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 5),
+              child: LocaleDraggableDivider(
+                  leftImage: 'assets/home/1.jpg',
+                  rightImage: homeImg,
+                  imgWidth: MediaQuery.of(context).size.width.toInt(),
+                  imgHeight: 250),
             ),
             SizedBox(
               height: 158,
               child: ListView(
+                key: const PageStorageKey('homeImg'),
+                controller: _scrollController,
                 scrollDirection: Axis.horizontal,
-                children: styleList,
+                children: staticStyleList
+                    .map(
+                      (e) => GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            style = e['value'];
+                            homeImg = e['uri'];
+                          });
+                          onScroll();
+                        },
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: style == e['value']
+                                  ? const Color.fromARGB(255, 113, 170, 216)
+                                  : const Color.fromARGB(255, 176, 176, 176)),
+                          margin: const EdgeInsets.only(left: 10),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                e['uri'],
+                                height: 130,
+                                width: 200,
+                                fit: BoxFit.cover,
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 3),
+                                child: Text(
+                                  e['label'].toString().tr,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color:
+                                          Color.fromARGB(255, 255, 255, 255)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             )
           ],

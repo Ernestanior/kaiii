@@ -18,7 +18,7 @@ class _ChangeLanState extends State<ChangeLan> {
   @override
   Widget build(BuildContext context) {
     onSubmit() async {
-      await ApiConnect().updateUser(
+      await updateUser(
           {'locale': selectedLanguage == 'English' ? 'en_US' : 'zh_CN'});
       UserInfo().getUserInfo();
       Get.back();
@@ -65,7 +65,7 @@ class _ChangeLanState extends State<ChangeLan> {
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -75,7 +75,7 @@ class _ChangeLanState extends State<ChangeLan> {
             child: Container(
               height: 50,
               decoration: const BoxDecoration(color: Colors.white),
-              padding: EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,

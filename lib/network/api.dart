@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/pages/login/index.dart';
 import 'package:kaino/store/store.dart';
@@ -84,15 +81,22 @@ class ApiConnect extends GetConnect {
     dynamic body,
   }) async {
     final token = await LocalStorage().localStorage('get', 'ai-token');
+
     final initHeaders = {
       ...?headers,
       'app-user-locale': 'zh_CN',
       'version': APP_VERSION,
-      'userAgent': userAgent,
-      'token': token.toString(),
+      'user-agent': Controller.c.userAgent.value,
+      // 'token': token.toString(),
+      'Finger-Print': 'aahga'
+      // 'Finger-Print': Controller.c.deviceId.value
     };
+    if (token != null) {
+      initHeaders['token'] = token;
+    }
     var res = await request(init_url + path, method,
         headers: initHeaders, body: body, query: query);
+    // print(res.body);
     if (pass) {
       return res;
     } else {
@@ -114,11 +118,37 @@ class ApiConnect extends GetConnect {
       }
     }
   }
-
-  Future getBaseUrl() => httpRequest('/info/app', 'get');
-  Future login(Map data) => httpRequest('/user/login', 'post', body: data);
-  Future googleLogin(String token) =>
-      httpRequest('/user/google-login', 'get', query: {'token': token});
-  Future getUserDetail() => httpRequest('/user/detail', 'get');
-  Future updateUser(Map data) => httpRequest('/user/update', 'put', body: data);
 }
+
+Future getBaseUrl() => ApiConnect().httpRequest('/info/app', 'get');
+Future login(Map data) =>
+    ApiConnect().httpRequest('/user/login', 'post', body: data);
+Future googleLogin(String token) => ApiConnect()
+    .httpRequest('/user/google-login', 'get', query: {'token': token});
+Future appleLogin(dynamic data) =>
+    ApiConnect().httpRequest('/user/apple-login', 'post', body: data);
+Future getUserDetail() => ApiConnect().httpRequest('/user/detail', 'get');
+Future updateUser(Map data) =>
+    ApiConnect().httpRequest('/user/update', 'put', body: data);
+Future updatePwd({required String password, required String newPassword}) =>
+    ApiConnect().httpRequest('/user/update-password', 'put',
+        body: {'password': password, 'newPassword': newPassword});
+Future deleteUser(String remarks) =>
+    ApiConnect().httpRequest('/user/delete', 'put', body: {'remarks': remarks});
+Future imgHistory(Map data) =>
+    ApiConnect().httpRequest('/img/history', 'post', body: data);
+Future freeToken() => ApiConnect().httpRequest('/user/img/free-token', 'get');
+Future base64Upload(FormData data) =>
+    ApiConnect().httpRequest('/img/app/upload', 'post', body: data);
+Future imgRender(dynamic data) =>
+    ApiConnect().httpRequest('/img/render', 'post', body: data);
+Future imgProgress(String taskId) =>
+    ApiConnect().httpRequest('/img/progress', 'get', query: {'taskId': taskId});
+Future imgResult(String taskId) =>
+    ApiConnect().httpRequest('/img/result', 'get', query: {'taskId': taskId});
+Future imgDelete(int id) => ApiConnect()
+    .httpRequest('/img/delete', 'delete', query: {'id': id.toString()});
+Future imgDeleteVisitor(int id) => ApiConnect()
+    .httpRequest('/img/delete/render-visitor', 'delete', query: {'id': id});
+Future renderCancel(String id) =>
+    ApiConnect().httpRequest('/img/render', 'put', query: {'taskId': id});

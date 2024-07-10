@@ -1,6 +1,7 @@
 import 'package:encrypt/encrypt.dart';
 
 String encrypt(String plainText) {
+  if (plainText == '') return '';
   const keyString = "asklg3hi^#xjvAk4";
   final key = Key.fromUtf8(keyString);
   final encrypter = Encrypter(AES(key, mode: AESMode.cbc));

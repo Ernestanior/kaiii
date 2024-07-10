@@ -1,7 +1,15 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaino/network/api.dart';
+import 'package:kaino/pages/profile/history/index.dart';
 import 'package:kaino/pages/profile/preference/index.dart';
+import 'package:kaino/pages/renderDetail/index.dart';
+import 'package:kaino/pages/rendering/index.dart';
+import 'package:kaino/pages/style/index.dart';
 
 import 'common/locale/index.dart';
 import 'pages/home/index.dart';
@@ -9,19 +17,40 @@ import 'pages/login/index.dart';
 import 'pages/profile/index.dart';
 import 'store/store.dart';
 
-void main() {
+Future<void> main() async {
+  // Ensure that plugin services are initialized so that `availableCameras()`
+// can be called before `runApp()`
+  WidgetsFlutterBinding.ensureInitialized();
+
   Get.lazyPut<ApiConnect>(() => ApiConnect());
+  Get.lazyPut(() => Controller());
+  // Lock orientation to portrait mode
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+  Controller.c.deviceId(iosInfo.identifierForVendor);
+  Controller.c.userAgent(iosInfo.utsname.machine);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   final Controller c = Get.put(Controller());
   Map routes = {
-    '/': (context) => Home(),
-    '/home': (context) => Home(),
+    '/': (context) => const Home(),
+    '/home': (context) => const Home(),
     '/profile': (context) => const Profile(),
+    '/history': (context) => const RenderHistory(),
     '/preference': (context) => const Preference(),
     '/login': (context) => const Login(),
+    '/style': (context) => const Style(),
+    '/rendering': (context) => const Rendering(),
+    '/renderDetail': (context, {arguments}) =>
+        RenderDetail(arguments: arguments),
+    '/renderPreview': (context, {arguments}) =>
+        RenderDetail(arguments: arguments),
   };
   MyApp({super.key});
 

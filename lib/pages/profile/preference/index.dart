@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/components/actionSheets/changeLan.dart';
 import 'package:kaino/components/actionSheets/changePwd.dart';
+import 'package:kaino/components/actionSheets/deleteAccount.dart';
 import 'package:kaino/components/actionSheets/logout.dart';
 import 'package:kaino/store/store.dart';
 
@@ -17,9 +18,10 @@ class _PreferenceState extends State<Preference> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          toolbarHeight: 40,
           title: Text(
             'PREFERENCE'.tr,
-            style: const TextStyle(color: Color(0xFF4D97D3)),
+            style: const TextStyle(color: Color(0xFF4D97D3), fontSize: 18),
           ),
           backgroundColor: Colors.white,
         ),
@@ -107,7 +109,10 @@ class _PreferenceState extends State<Preference> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Get.bottomSheet(const DeleteAccount(),
+                                isScrollControlled: true);
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 25, horizontal: 25),
@@ -119,7 +124,7 @@ class _PreferenceState extends State<Preference> {
                               children: [
                                 SizedBox(
                                     width: 140,
-                                    child: Text('DELETE_ACCOUNT'.tr)),
+                                    child: Text('CLOSE_ACCOUNT'.tr)),
                                 const Icon(Icons.chevron_right)
                               ],
                             ),
@@ -164,11 +169,13 @@ class _PreferenceState extends State<Preference> {
                     children: [
                       Text(
                         'CONTACT_FOR_QUESTIONS'.tr,
-                        style: const TextStyle(color: Color(0xFF6A6A6A)),
+                        style: const TextStyle(
+                            color: Color(0xFF6A6A6A), fontSize: 12),
                       ),
                       const Text(
                         'enquiry@kainoai.com',
-                        style: TextStyle(color: Color(0xFF2E88D1)),
+                        style:
+                            TextStyle(color: Color(0xFF2E88D1), fontSize: 12),
                       )
                     ],
                   ),
@@ -177,11 +184,13 @@ class _PreferenceState extends State<Preference> {
                     children: [
                       Text(
                         'VERSION'.tr,
-                        style: const TextStyle(color: Color(0xFF6A6A6A)),
+                        style: const TextStyle(
+                            color: Color(0xFF6A6A6A), fontSize: 12),
                       ),
                       const Text(
                         ': v1.2.15',
-                        style: TextStyle(color: Color(0xFF6A6A6A)),
+                        style:
+                            TextStyle(color: Color(0xFF6A6A6A), fontSize: 12),
                       )
                     ],
                   ),

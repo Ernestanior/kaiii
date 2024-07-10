@@ -7,10 +7,12 @@ import 'package:kaino/store/token.dart';
 class UserInfo {
   getUserInfo() async {
     final token = await LocalStorage().localStorage('get', 'ai-token');
-    print(token);
+
     if (token != null) {
-      final res = await ApiConnect().getUserDetail();
-      print(res);
+      final res = await getUserDetail();
+      if (res is String) {
+        return;
+      }
       var locale;
       if (res['locale'] == 'en_US') {
         locale = const Locale('en', 'US');
