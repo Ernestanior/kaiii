@@ -391,4 +391,11 @@ Map<String, String> zh_CN = {
   "FOUND_A_BETTER_ALTERNATIVE": "找到了更好的替代品",
   "REMARK": "备注",
   "PLEASE_CHOOSE_REASON": "请选择原因",
+  "REGISTER_SUCCESSFUL": "成功注册",
+  "REGISTER_SUCCESSFUL_CONTEXT_1": "我们将会发邮件通知您",
+  "REGISTER_SUCCESSFUL_CONTEXT_2": "请点击邮箱链接激活账号",
+  "REGISTER_SUCCESSFUL_CONTEXT_3": "若您没有收到邮件，请点击下方按钮进行重发。",
+
+  "DISABLE": "禁用",
+  "ENABLE": "启用",
 };

@@ -1,18 +1,14 @@
-import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:kaino/components/actionSheets/deleteImage.dart';
 import 'package:kaino/components/draggableDivider/index.dart';
-import 'package:http/http.dart' as http;
 import 'package:kaino/components/imgView/index.dart';
 import 'package:kaino/store/store.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import 'package:share_plus/share_plus.dart';
 
@@ -31,15 +27,34 @@ class _RenderDetailState extends State<RenderDetail> {
   int imgWidth = 0;
   int imgHeight = 0;
   bool renderInfo = false;
+  late ScrollController _scrollController;
+
   @override
   void initState() {
+    super.initState();
+    _scrollController = ScrollController();
     setState(() {
-      print('hh');
-      print(widget.arguments);
       item = widget.arguments;
       imgWidth = widget.arguments['renderDetail']['width'];
       imgHeight = widget.arguments['renderDetail']['height'];
     });
+  }
+
+  onScroll() {
+    print(imgWidth);
+    print(imgHeight);
+
+    if (_scrollController.hasClients) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final itemWidth = imgWidth / imgHeight * 133;
+      final targetScrollOffset =
+          (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+      _scrollController.animateTo(
+        targetScrollOffset,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -64,6 +79,7 @@ class _RenderDetailState extends State<RenderDetail> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   child: ListView(
+                    controller: _scrollController,
                     scrollDirection: Axis.horizontal,
                     children: item['renderImgUris']
                         .asMap()
@@ -74,6 +90,7 @@ class _RenderDetailState extends State<RenderDetail> {
                               setState(() {
                                 selectedIndex = e.key;
                               });
+                              onScroll();
                             },
                             child: Container(
                                 margin:

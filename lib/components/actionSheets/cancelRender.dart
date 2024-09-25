@@ -4,8 +4,8 @@ import 'package:kaino/network/api.dart';
 import 'package:kaino/pages/home/index.dart';
 
 class CancelRender extends StatefulWidget {
-  String id;
-  CancelRender({super.key, required this.id});
+  final String id;
+  const CancelRender({super.key, required this.id});
 
   @override
   State<CancelRender> createState() => _CancelRenderState();

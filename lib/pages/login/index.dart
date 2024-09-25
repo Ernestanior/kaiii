@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/common/encrypt.dart';
@@ -6,6 +8,7 @@ import 'package:kaino/common/utils.dart';
 import 'package:kaino/components/squareTile/index.dart';
 import 'package:kaino/network/api.dart';
 import 'package:kaino/pages/home/index.dart';
+import 'package:kaino/pages/twoFA/index.dart';
 import 'package:kaino/store/store.dart';
 import 'package:kaino/store/token.dart';
 import 'package:kaino/store/user.dart';
@@ -24,6 +27,7 @@ class _LoginState extends State<Login> {
   String username = '';
   String password = '';
   String errMsg = '';
+  String temporaryToken = '';
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +36,28 @@ class _LoginState extends State<Login> {
       } else {}
     }
 
+    Future<void> onAuthValidate(res) async {
+      if (res['twoFactorAuth'] == 1) {
+        setState(() {
+          temporaryToken = res['token'];
+          Navigator.pushNamed(context, '/varification',
+              arguments: {'temporaryToken': temporaryToken});
+        });
+      } else {
+        if (res['token'] != null) {
+          await LocalStorage()
+              .localStorage('set', 'ai-token', value: res['token']);
+          UserInfo().getUserInfo();
+          Get.offAll(() => const Home());
+        }
+      }
+    }
+
     onGoogleLogin() async {
       final googleToken = await GoogleAuthService().signInWithGoogle();
       if (googleToken != null) {
         final res = await googleLogin(googleToken);
-        await LocalStorage()
-            .localStorage('set', 'ai-token', value: res['token']);
-        UserInfo().getUserInfo();
-        Get.offAll(() => const Home());
+        onAuthValidate(res);
       }
     }
 
@@ -57,10 +75,7 @@ class _LoginState extends State<Login> {
           'platform': 'com.gp.kaino',
           'authorizationCode': credential.authorizationCode
         });
-        await LocalStorage()
-            .localStorage('set', 'ai-token', value: res['token']);
-        UserInfo().getUserInfo();
-        Get.offAll(() => const Home());
+        onAuthValidate(res);
       } catch (e) {
         print(e);
       }
@@ -75,7 +90,7 @@ class _LoginState extends State<Login> {
       }
       if (!Utils().validateEmail(username)) {
         setState(() {
-          errMsg = "USERNAME_OR_PASSWORD_CANNOT_BE_EMPTY".tr;
+          errMsg = "PLEASE_ENTER_VALID_EMAIL".tr;
         });
         return null;
       }
@@ -86,9 +101,7 @@ class _LoginState extends State<Login> {
         'response': 'app'
       };
       dynamic res = await login(data);
-      Controller.c.token(res['token']);
-      await LocalStorage().localStorage('set', 'ai-token', value: res['token']);
-      Get.offAll(() => const Home());
+      onAuthValidate(res);
     }
 
     return Scaffold(
@@ -143,6 +156,18 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               )),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 30, top: 10),
+                child: Text(
+                  errMsg,
+                  style: const TextStyle(color: Colors.red, fontSize: 11),
+                  textAlign: TextAlign.start,
+                ),
+              )
+            ],
+          ),
           Container(
             margin: const EdgeInsets.fromLTRB(10, 20, 20, 0),
             child: Row(
@@ -192,12 +217,17 @@ class _LoginState extends State<Login> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text('NO_ACCOUNT_YET'.tr),
-                const Text('   '),
-                Text(
-                  'SIGN_UP_HERE'.tr,
-                  style: const TextStyle(color: Colors.blue),
-                ),
+                Text('HAVE_NO_ACCOUNT'.tr),
+                const Text(' '),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: Text(
+                    'SIGN_UP_HERE'.tr,
+                    style: const TextStyle(color: Colors.blue),
+                  ),
+                )
               ],
             ),
           ),

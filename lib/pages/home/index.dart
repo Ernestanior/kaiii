@@ -25,9 +25,10 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    UserInfo().getUserInfo();
     super.initState();
     _scrollController = ScrollController();
+    UserInfo().getUserInfo();
+
     // Restore scroll position if needed
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   onScroll();
@@ -53,6 +54,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 40,
@@ -100,7 +104,16 @@ class _HomeState extends State<Home> {
                   KainoIcon.user,
                   color: Colors.blue,
                 ),
-              )
+              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.pushNamed(context, '/canvas');
+              //   },
+              //   child: const Icon(
+              //     KainoIcon.token,
+              //     color: Colors.blue,
+              //   ),
+              // )
             ],
           )
         ]),
@@ -115,8 +128,8 @@ class _HomeState extends State<Home> {
                 children: <Widget>[
                   Text(
                     'MAKE_THE'.tr,
-                    style: const TextStyle(
-                        fontSize: 40,
+                    style: TextStyle(
+                        fontSize: screenHeight * 0.03,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(198, 84, 124, 187)),
                   ),

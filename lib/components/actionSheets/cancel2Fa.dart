@@ -2,38 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/network/api.dart';
 import 'package:kaino/pages/home/index.dart';
-import 'package:kaino/store/store.dart';
+import 'package:kaino/store/user.dart';
 
-class DeleteImage extends StatefulWidget {
-  final int id;
-  const DeleteImage({super.key, required this.id});
+class Cancel2fa extends StatefulWidget {
+  const Cancel2fa({super.key});
 
   @override
-  State<DeleteImage> createState() => _DeleteImageState();
+  State<Cancel2fa> createState() => _Cancel2faState();
 }
 
-class _DeleteImageState extends State<DeleteImage> {
+class _Cancel2faState extends State<Cancel2fa> {
   @override
   Widget build(BuildContext context) {
     onSubmit() async {
-      if (Controller.c.user.isEmpty) {
-        await imgDeleteVisitor(widget.id);
-      } else {
-        await imgDelete(widget.id);
-      }
-      // Get.back();
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) {
-        return const Home();
-      }), (route) => false);
-      Navigator.pushNamed(context, '/profile');
+      await googleAuthCodeDisable();
+      UserInfo().getUserInfo();
+      Get.back();
     }
 
     return Container(
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             color: Colors.white),
-        height: 170,
+        height: 190,
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +39,7 @@ class _DeleteImageState extends State<DeleteImage> {
                   width: 5,
                 ),
                 Text(
-                  'DELETE_IMAGE'.tr,
+                  'DISABLE'.tr,
                   style: const TextStyle(
                       color: Colors.red,
                       fontSize: 18,
@@ -59,7 +50,7 @@ class _DeleteImageState extends State<DeleteImage> {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
-                'SURE_TO_DELETE_IMAGE'.tr,
+                'DISABLE_2FA'.tr,
               ),
             ),
             Row(

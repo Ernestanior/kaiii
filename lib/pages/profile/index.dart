@@ -136,21 +136,26 @@ class _ProfileState extends State<Profile> {
                                 ]),
                           ),
                         ),
-                        Container(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Icon(
-                                    KainoIcon.twoFA,
-                                    color: Color(0xFF4D97D3),
-                                    size: 23,
-                                  ),
-                                  Container(width: 20),
-                                  Expanded(child: Text('TWOFA'.tr)),
-                                  const Icon(Icons.chevron_right)
-                                ])),
+                        GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/twofa');
+                            },
+                            child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Icon(
+                                        KainoIcon.twoFA,
+                                        color: Color(0xFF4D97D3),
+                                        size: 23,
+                                      ),
+                                      Container(width: 20),
+                                      Expanded(child: Text('TWOFA'.tr)),
+                                      const Icon(Icons.chevron_right)
+                                    ]))),
                       ],
                     )),
                 Row(

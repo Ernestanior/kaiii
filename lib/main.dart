@@ -5,11 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kaino/network/api.dart';
+import 'package:kaino/pages/canvas/index.dart';
+import 'package:kaino/pages/login/valification.dart';
 import 'package:kaino/pages/profile/history/index.dart';
 import 'package:kaino/pages/profile/preference/index.dart';
+import 'package:kaino/pages/register/index.dart';
+import 'package:kaino/pages/register/success.dart';
 import 'package:kaino/pages/renderDetail/index.dart';
 import 'package:kaino/pages/rendering/index.dart';
 import 'package:kaino/pages/style/index.dart';
+import 'package:kaino/pages/twoFA/authDetail.dart';
+import 'package:kaino/pages/twoFA/enterCode.dart';
+import 'package:kaino/pages/twoFA/index.dart';
+import 'package:kaino/pages/twoFA/success.dart';
 
 import 'common/locale/index.dart';
 import 'pages/home/index.dart';
@@ -39,12 +47,21 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final Controller c = Get.put(Controller());
   Map routes = {
-    '/': (context) => const Home(),
+    '/': (context) => Home(),
     '/home': (context) => const Home(),
     '/profile': (context) => const Profile(),
     '/history': (context) => const RenderHistory(),
     '/preference': (context) => const Preference(),
     '/login': (context) => const Login(),
+    '/register': (context) => const Register(),
+    '/registerSuccess': (context) => const RegisterSuccess(),
+    '/twofa': (context) => const TwoFa(),
+    '/varification': (context, {arguments}) =>
+        Varification(arguments: arguments),
+    '/authDetail': (context) => const Authdetail(),
+    '/enterCode': (context) => const Entercode(),
+    '/AuthSuccess': (context) => const AuthSuccess(),
+    '/canvas': (context) => ImageEraseApp(),
     '/style': (context) => const Style(),
     '/rendering': (context) => const Rendering(),
     '/renderDetail': (context, {arguments}) =>

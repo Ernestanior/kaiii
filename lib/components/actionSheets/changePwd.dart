@@ -138,7 +138,7 @@ class _ChangePwdState extends State<ChangePwd> {
             height: 30,
           ),
           Text(
-            'PASSWORD_REQUIREMENTS_DESC'.tr,
+            'PASSWORD_COMPLEX_INFO'.tr,
             style: const TextStyle(
                 color: Color(
                   0xFF707070,

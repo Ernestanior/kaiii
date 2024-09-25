@@ -439,4 +439,7 @@ Map<String, String> en_US = {
   "FOUND_A_BETTER_ALTERNATIVE": "Found a better alternative",
   "REMARK": "Remark",
   "PLEASE_CHOOSE_REASON": "Please Choose Reasons",
+
+  "DISABLE": "Disable",
+  "ENABLE": "Enable",
 };

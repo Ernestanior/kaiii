@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kaino/network/api.dart';
@@ -7,8 +9,7 @@ import 'package:kaino/store/token.dart';
 class UserInfo {
   getUserInfo() async {
     final token = await LocalStorage().localStorage('get', 'ai-token');
-
-    if (token != null) {
+    if (token != null && token != '2FA验证失败, 请检查后再次尝试') {
       final res = await getUserDetail();
       if (res is String) {
         return;
@@ -21,6 +22,7 @@ class UserInfo {
         locale = const Locale('zh', 'CN');
         Get.updateLocale(locale);
       }
+
       Controller.c.user(res);
       Controller.c.language(res['locale']);
     } else {

@@ -168,7 +168,7 @@ class _PreferenceState extends State<Preference> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'CONTACT_FOR_QUESTIONS'.tr,
+                        'FOR_MORE_QUESTIONS_PLEASE_CONTACT'.tr,
                         style: const TextStyle(
                             color: Color(0xFF6A6A6A), fontSize: 12),
                       ),

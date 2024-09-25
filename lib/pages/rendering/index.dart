@@ -72,7 +72,7 @@ class _RenderingState extends State<Rendering> with TickerProviderStateMixin {
           controller.animateTo(p);
         }
       } catch (e) {
-        if (mounted) {
+        if (mounted && res != null) {
           setState(() {
             info = res;
           });
