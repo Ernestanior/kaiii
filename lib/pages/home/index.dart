@@ -129,14 +129,14 @@ class _HomeState extends State<Home> {
                   Text(
                     'MAKE_THE'.tr,
                     style: TextStyle(
-                        fontSize: screenHeight * 0.03,
+                        fontSize: screenHeight * 0.04,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(198, 84, 124, 187)),
                   ),
                   Text(
                     'DESIGN_EASIER'.tr,
-                    style: const TextStyle(
-                        fontSize: 40,
+                    style: TextStyle(
+                        fontSize: screenHeight * 0.04,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(198, 84, 124, 187)),
                   ),
